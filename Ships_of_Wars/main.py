@@ -1,6 +1,6 @@
 from funcoes import salvar_jogo as SJ, carregar_jogo as CJ, mostrar_capa as MC, menu_principal as MP, criar_naves as CN, colocar_naves_aleatoriamente as CNA, \
 validar_e_adicionar_tiro as VAT, aplicar_tiros as AT, atualizar_tabuleiro as ATT, limpar_ecra as LE, pausar as P
-from classes.naves import NaveModelos as NM, NaveEspacial as NE
+from classes.naves import NaveModelo as NM, NaveEspacial as NE
 from classes.tabuleiro import Tabuleiro as T
 
 tab = T(x=10, y=10)
