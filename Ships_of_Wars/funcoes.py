@@ -4,56 +4,8 @@
 import random
 import json
 import os
-from naves import NaveModelo, NaveExtra
-
-# Mapas de cores ANSI simples (só cores básicas portáteis)
-ANSI_COLORS = {
-    'red': '\u001b[31m',
-    'green': '\u001b[32m',
-    'yellow': '\u001b[33m',
-    'blue': '\u001b[34m',
-    'magenta': '\u001b[35m',
-    'cyan': '\u001b[36m',
-    'reset': '\u001b[0m'
-}
-
-
-def limpar_ecra():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-
-def criar_matriz(n=10, m=10, fill='.'):
-    return [[fill for _ in range(m)] for _ in range(n)]
-
-
-def imprimir_matriz(mat):
-    for linha in mat:
-        print(' '.join(linha))
-
-
-def marcar_naves_no_tabuleiro(mat, posicoes, mostrar_mortas=False):
-    # posicoes: dict -> nome_nave: (x,y, objeto_nave)
-    matriz = [row[:] for row in mat]
-    for chave, (x, y, nave) in posicoes.items():
-        if nave.energia > 0 or mostrar_mortas:
-            cor_code = ANSI_COLORS.get(nave.cor, '')
-            reset = ANSI_COLORS['reset']
-            matriz[x][y] = f"{cor_code}{nave.simbolo}{reset}"
-        else:
-            matriz[x][y] = '.'
-    return matriz
-
-
-def marcar_tiros_no_tabuleiro(mat, tiros):
-    matriz = [row[:] for row in mat]
-    for (x, y) in tiros:
-        matriz[x][y] = 'X'
-    return matriz
-
-
-def posicao_valida(n, m, x, y):
-    return 0 <= x < n and 0 <= y < m
-
+from classes.naves import NaveModelo as NM, NaveEspacial as NE
+from classes.tabuleiro import Tabuleiro as T
 
 def posicao_aleatoria_sem_choque(n, m, ocupadas):
     # ocupadas: set of (x,y)
@@ -82,9 +34,9 @@ def carregar_jogo(filepath):
     naves_obj = {}
     for nome, nd in data['naves'].items():
         if nd.get('classe') == 'NaveExtra':
-            n = NaveExtra.from_dict(nd)
+            n = NE.from_dict(nd)
         else:
-            n = NaveModelo.from_dict(nd)
+            n = NE.from_dict(nd)
         naves_obj[nome] = n
     posicoes = {nome: (p[0], p[1], naves_obj[nome]) for nome, p in data['posicoes'].items()}
     tiros = [tuple(t) for t in data['tiros']]
@@ -115,7 +67,7 @@ def colocar_naves_aleatoriamente(n_linhas, n_colunas, naves_obj):
 
 
 def validar_e_adicionar_tiro(n_linhas, n_colunas, tiros_existentes, x, y):
-    if not posicao_valida(n_linhas, n_colunas, x, y):
+    if not T.posicao_valida(n_linhas, n_colunas, x, y):
         return False, 'Coordenadas fora do tabuleiro.'
     if (x,y) in tiros_existentes:
         return False, 'Já foi dado um tiro nessa casa.'
