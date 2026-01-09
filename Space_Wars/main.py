@@ -19,7 +19,7 @@ if __name__ == "__main__":
                 tab, naves, tiros_total, tiros_certos, naves_posicoes, tiros_posicoes
             )
         elif opc == "2":
-            dados = carregar_jogo("save.json")
+            dados = carregar_jogo_com_selecao()
             if dados:
                 naves = criar_naves(dados)
                 tiros_total = dados.get("tiros_total", 0)
@@ -32,7 +32,7 @@ if __name__ == "__main__":
                 )
         elif opc == "3":
             if naves:
-                salvar_jogo("save.json", naves, tiros_total, tiros_certos, naves_posicoes, tiros_posicoes)
+                salvar_jogo_com_nome(naves, tiros_total, tiros_certos, naves_posicoes, tiros_posicoes)
             else:
                 print("Nenhum jogo para salvar!")
                 input("Pressione Enter para continuar...")

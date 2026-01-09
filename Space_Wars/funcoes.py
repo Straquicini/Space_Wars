@@ -83,6 +83,10 @@ def iniciar_jogo(tabuleiro, naves=None, tiros_total=0, tiros_certos=0, naves_pos
         # Verificar se o jogador quer sair
         sair = input("Pressione 'S' para sair do jogo ou Enter para continuar: ").strip().upper()
         if sair == "S":
+            # Perguntar se quer salvar antes de sair
+            salvar = input("Deseja salvar o jogo antes de sair? (S/N): ").strip().upper()
+            if salvar == "S":
+                salvar_jogo("save.json", naves, tiros_total, tiros_certos, tab.naves_posicoes, tab.tiros_posicoes)
             print("Saindo do jogo e voltando ao menu...")
             break
 
@@ -138,7 +142,13 @@ def iniciar_jogo(tabuleiro, naves=None, tiros_total=0, tiros_certos=0, naves_pos
 
 
 # ----------------------- SALVAR / CARREGAR -----------------------
-def salvar_jogo(arquivo, naves, tiros_total, tiros_certos, naves_posicoes, tiros_posicoes):
+def salvar_jogo_com_nome(naves, tiros_total, tiros_certos, naves_posicoes, tiros_posicoes):
+    nome = input("Digite o nome para salvar o jogo: ").strip()
+    if not nome:
+        print("Nome inválido! Salvando como 'save.json' por padrão.")
+        nome = "save"
+    arquivo = f"{nome}.json"
+    
     dados = {
         "naves": [n.to_dict() for n in naves],
         "tiros_total": tiros_total,
@@ -148,7 +158,37 @@ def salvar_jogo(arquivo, naves, tiros_total, tiros_certos, naves_posicoes, tiros
     }
     with open(arquivo, "w") as f:
         json.dump(dados, f)
-    print("Jogo salvo com sucesso!")
+    print(f"Jogo salvo com sucesso como '{arquivo}'!")
+    
+import glob
+
+def listar_jogos_salvos():
+    arquivos = glob.glob("*.json")
+    if not arquivos:
+        print("Nenhum jogo salvo encontrado.")
+        return []
+    print("\nJogos salvos disponíveis:")
+    for i, arq in enumerate(arquivos):
+        print(f"{i+1} - {arq}")
+    return arquivos
+
+def carregar_jogo_com_selecao():
+    arquivos = listar_jogos_salvos()
+    if not arquivos:
+        return None
+    while True:
+        try:
+            escolha = int(input("Digite o número do jogo que deseja carregar: "))
+            if 1 <= escolha <= len(arquivos):
+                arquivo = arquivos[escolha-1]
+                with open(arquivo, "r") as f:
+                    dados = json.load(f)
+                print(f"Jogo '{arquivo}' carregado com sucesso!")
+                return dados
+            else:
+                print("Escolha inválida, tente novamente.")
+        except ValueError:
+            print("Digite um número válido.")
 
 def carregar_jogo(arquivo):
     try:
