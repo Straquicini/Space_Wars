@@ -1,4 +1,4 @@
-# 🚢 Space Wars
+# 🛸 Space Wars
 
 Um jogo de **batalha naval desenvolvido em Python**, onde o jogador deve localizar e destruir as naves inimigas utilizando um número limitado de tiros.
 O jogo permite jogar **contra a máquina (computador)** ou **contra outro jogador**.
